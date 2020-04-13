@@ -1,15 +1,11 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const express = require("express");
+const app = express();
 
 admin.initializeApp();
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send("Hello from SocialApp!");
-});
 
-exports.getScreams = functions.https.onRequest((req, res) => {
+app.get("/screams", (req, res) => {
   admin
     .firestore()
     .collection("screams")
@@ -46,3 +42,5 @@ exports.createScream = functions.https.onRequest((req, res) => {
       console.error(err);
     });
 });
+
+exports.api = functions.https.onRequest(app);
