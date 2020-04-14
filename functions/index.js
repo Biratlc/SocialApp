@@ -1,10 +1,23 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const express = require("express");
-const app = express();
+const app = require("express")();
+
+const firebase = require("firebase");
 
 admin.initializeApp();
 
+const config = {
+  apiKey: "AIzaSyCv1TDYCDCZuF0CUzlT8g07-LftqFQzuYM",
+  authDomain: "socialapp-df35c.firebaseapp.com",
+  databaseURL: "https://socialapp-df35c.firebaseio.com",
+  projectId: "socialapp-df35c",
+  storageBucket: "socialapp-df35c.appspot.com",
+  messagingSenderId: "940761753601",
+  appId: "1:940761753601:web:770785f45af940fc633800",
+  measurementId: "G-FERNGGNZ4Q",
+};
+
+firebase.initializeApp(config);
 app.get("/screams", (req, res) => {
   admin
     .firestore()
@@ -43,6 +56,28 @@ app.post("/scream", (req, res) => {
     .catch((err) => {
       res.status(500).json({ error: "something went wrong" });
       console.error(err);
+    });
+});
+
+app.post("/signup", (req, res) => {
+  const newUser = {
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    handle: req.body.handle,
+  };
+
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(newUser.email, newUser.password)
+    .then((data) => {
+      return res
+        .status(201)
+        .json({ message: `user ${data.user.uid} signed up successfully` });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
     });
 });
 
